@@ -1,4 +1,4 @@
-/*global document*/
+/*global BugMagnet*/
 BugMagnet.processMenuObject = function (configObject, menuBuilder, parentMenu) {
 	'use strict';
 	var getTitle = function (key) {

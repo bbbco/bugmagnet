@@ -75,10 +75,41 @@
 	exports['test menuItem function requires two-three parameters'] = function (assert) {
 		FirefoxMenuBuilder.prototype.rootMenu('Foo');
 		assert.throws(function () {
+			FirefoxMenuBuilder.prototype.menuItem();
+		}, 'menuItem does not work with no parameters');
+		assert.throws(function () {
 			FirefoxMenuBuilder.prototype.menuItem('Bar');
 		}, 'menuItem does not work with one parameter only');
 		assert.throws(function () {
 			FirefoxMenuBuilder.prototype.menuItem('Bar', 'Foo', 'Baz');
+		}, 'menuItem does not work with all string parameters');
+	};
+
+	// Jetpack SDK does not have a good way to hook into context menu :(
+	/**
+	exports['test configMenuItem function happy path with item value as callback'] = function (assert, done) {
+		var foo = FirefoxMenuBuilder.prototype.rootMenu('Foo'),
+			item = FirefoxMenuBuilder.prototype.configMenuItem('Bar', foo, function(){
+				assert.pass();
+				done();
+			});
+		assert.ok(item, 'Creates configMenuItem');
+		assert.equal(item.label, 'Bar', 'configMenuItem has label');
+		// Simulate click
+		item.message("click");
+	};
+	**/
+
+	exports['test configMenuItem function requires two-three parameters'] = function (assert) {
+		FirefoxMenuBuilder.prototype.rootMenu('Foo');
+		assert.throws(function () {
+			FirefoxMenuBuilder.prototype.configMenuItem();
+		}, 'menuItem does not work with no parameters');
+		assert.throws(function () {
+			FirefoxMenuBuilder.prototype.configMenuItem('Bar');
+		}, 'menuItem does not work with one parameter only');
+		assert.throws(function () {
+			FirefoxMenuBuilder.prototype.configMenuItem('Bar', 'Foo', 'Baz');
 		}, 'menuItem does not work with all string parameters');
 	};
 

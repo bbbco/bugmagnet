@@ -21,21 +21,23 @@ module.exports = function (grunt) {
 		},
 		concat: {
 			chrome_extension_js: {
-				src: ['template/js/head.txt', 'src/common/bugmagnet.js', 'src/chrome/chrome-menubuilder.js', 'src/chrome/chrome-extension.js', 'template/js/foot.txt'],
+				src: ['template/js/head.txt', 'src/common/bugmagnet-defined.js', 'src/common/bugmagnet-menuhandler.js', 'src/chrome/chrome-menubuilder.js', 'src/chrome/chrome-extension.js', 'template/js/foot.txt'],
 				dest: 'pack/chrome/extension.js'
 			},
 			chrome_options_js: {
-				src: ['template/js/head.txt', 'src/common/bugmagnet.js', 'src/common/bugmagnet-config.js', 'src/chrome/config-init.js', 'template/js/foot.txt'],
+				src: ['template/js/head.txt', 'src/common/bugmagnet-defined.js', 'src/common/bugmagnet-config.js', 'src/chrome/config-init.js', 'template/js/foot.txt'],
 				dest: 'pack/chrome/options.js'
 			},
 			chrome_context_js: {
-				src: ['template/js/head.txt', 'src/common/bugmagnet.js', 'src/chrome/chrome-content-script.js', 'template/js/foot.txt'],
+				src: ['template/js/head.txt', 'src/common/bugmagnet-defined.js', 'src/common/bugmagnet-execute.js', 'src/chrome/chrome-content-script.js', 'template/js/foot.txt'],
 				dest: 'pack/chrome/content-script.js'
 			},
 			firefox: {
 				files: {
-					'pack/firefox/lib/main.js': ['template/js/head.txt', 'src/common/bugmagnet.js', 'src/firefox/common.js', 'src/firefox/menubuilder.js', 'src/firefox/firefox-addon.js', 'template/js/foot.txt'],
-					'pack/firefox/data/context-element.js': ['src/common/bugmagnet.js', 'src/firefox/context-element.js']
+					'pack/firefox/lib/main.js': ['template/js/head.txt', 'src/common/bugmagnet-defined.js', 'src/common/bugmagnet-menuhandler.js', 'src/firefox/common.js', 'src/firefox/menubuilder.js', 'src/firefox/firefox-addon.js', 'template/js/foot.txt'],
+					'pack/firefox/data/context-element.js': ['src/common/bugmagnet-defined.js', 'src/common/bugmagnet-execute.js', 'src/firefox/context-element.js'],
+					'pack/firefox/data/options.js': ['template/js/head.txt', 'src/common/bugmagnet-defined.js', 'src/common/bugmagnet-config.js', 'src/firefox/firefox-config-init.js', 'template/js/foot.txt'],
+					'pack/firefox/data/config-content-script.js': ['template/js/head.txt', 'src/firefox/firefox-config-content-script.js', 'template/js/foot.txt']
 				}
 			}
 		},
@@ -118,7 +120,7 @@ module.exports = function (grunt) {
 			},
 			'experimental': {
 				options: {
-					'mozilla-addon-sdk': 'latest',
+					'mozilla-addon-sdk': 'master',
 					extension_dir: 'pack/firefox',
 					dist_dir: 'tmp/dist-experimental',
 					strip_sdk: false // true by default
@@ -144,9 +146,17 @@ module.exports = function (grunt) {
 			},
 			'run_experimental': {
 				options: {
-					'mozilla-addon-sdk': 'latest',
+					'mozilla-addon-sdk': 'master',
 					extension_dir: 'pack/firefox',
 					command: 'run',
+					pipe_output: true
+				}
+			},
+			'test_experimental': {
+				options: {
+					'mozilla-addon-sdk': 'master',
+					extension_dir: 'pack/firefox',
+					command: 'test',
 					pipe_output: true
 				}
 			}
@@ -178,7 +188,8 @@ module.exports = function (grunt) {
 	grunt.registerTask('test-chrome', ['jasmine:common', 'jasmine:chrome']);
 	grunt.registerTask('package-chrome', ['checkstyle', 'test-chrome', 'clean', 'copy:chrome', 'concat:chrome_extension_js', 'concat:chrome_context_js', 'concat:chrome_options_js', 'compress']);
 	grunt.registerTask('run-firefox-no-package', ['mozilla-addon-sdk', 'mozilla-cfx:test_stable', 'mozilla-cfx:run_stable']);
-	grunt.registerTask('run-firefox', ['clean', 'copy:firefox', 'concat:firefox', 'mozilla-addon-sdk', 'mozilla-cfx:test_stable', 'mozilla-cfx:run_stable']);
+	grunt.registerTask('run-firefox-experimental', ['checkstyle', 'clean', 'copy:firefox', 'concat:firefox', 'mozilla-addon-sdk:master', 'mozilla-cfx:test_experimental', 'mozilla-cfx:run_experimental']);
+	grunt.registerTask('run-firefox', ['checkstyle', 'clean', 'copy:firefox', 'concat:firefox', 'mozilla-addon-sdk', 'mozilla-cfx:test_stable', 'mozilla-cfx:run_stable']);
 	grunt.registerTask('test-firefox', ['jasmine:common', 'clean', 'copy:firefox', 'concat:firefox', 'mozilla-addon-sdk', 'mozilla-cfx:test_stable']);
 	grunt.registerTask('package-firefox', ['checkstyle', 'test-firefox', 'clean', 'copy:firefox', 'concat:firefox', 'mozilla-addon-sdk', 'mozilla-cfx:test_stable', 'mozilla-cfx-xpi:stable']);
 };

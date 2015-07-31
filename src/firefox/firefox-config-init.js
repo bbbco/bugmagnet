@@ -1,20 +1,38 @@
-/*global exports, require*/
+/*global addon, document, BugMagnet*/
 /*jshint moz:true*/
 const FirefoxConfigInterface = function () {
 	'use strict';
+
+	this.saveOptions = function (additionalMenus) {
+		SendMessageToAddon('saveOptions', additionalMenus);
+	};
+
+	this.loadOptions = function (callback) {
+		var options = null;
+		window.addEventListener('getOptions', function(e) {
+			options = e.detail;
+			callback(options);
+		}, false);
+		SendMessageToAddon('loadOptions');
+	};
+
+	this.closeWindow = function () {
+		SendMessageToAddon('hidePanel', null);
+	};
+
 };
 
-FirefoxConfigInterface.prototype.saveOptions = function (additionalMenus) {
+const SendMessageToAddon = function(name, data) {
 	'use strict';
-	addon.port.emit("saveOptions", additionalMenus);
+
+	var event = document.createEvent('CustomEvent');
+	event.initCustomEvent(name, true, true, data);
+	document.documentElement.dispatchEvent(event);
+
 };
 
-FirefoxConfigInterface.prototype.loadOptions = function (callback) {
+document.addEventListener('DOMContentLoaded', function () {
 	'use strict';
-	callback(addon.port.emit("loadOptions"));
-};
-
-addon.port.on("show", function onShow() {
-	'use strict';
+	SendMessageToAddon('initedPanel', document.getElementById('main'));
 	BugMagnet.initConfigWidget(document.getElementById('main'), new FirefoxConfigInterface());
-});
+}, false);

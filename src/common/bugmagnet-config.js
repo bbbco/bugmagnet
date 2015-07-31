@@ -53,12 +53,15 @@ BugMagnet.initConfigWidget = function (domElement, configInterface) {
 			initScreen = function () {
 				domElement.querySelector('[role=add]').addEventListener('click', showFileSelector);
 				domElement.querySelector('[role=close]').addEventListener('click', function () {
-					window.close();
+					configInterface.closeWindow();
 				});
 				domElement.querySelector('[role=back]').addEventListener('click', showMainScreen);
-
-				domElement.querySelector('[role=file-selector]').addEventListener('change', function () {
-					var element = this,
+				domElement.querySelector('[role=select-file-cover]').addEventListener('click', function(e) {
+					domElement.querySelector('[role=file-selector]').click();
+				}, false);
+				domElement.querySelector('[role=file-selector]').addEventListener('change', readFile, false);
+				function readFile (evt) {
+					var element = evt,
 						oFReader = new FileReader(),
 						fileName,
 						submenuName,
@@ -79,7 +82,7 @@ BugMagnet.initConfigWidget = function (domElement, configInterface) {
 					oFReader.onerror = function () {
 						updateStatus('Error reading ' + fileName);
 					};
-					fileInfo = this.files[0];
+					fileInfo = evt.target.files[0];
 					fileName = fileInfo.name;
 					submenuName = submenuField.value && submenuField.value.trim();
 					if (!submenuName) {
@@ -88,7 +91,7 @@ BugMagnet.initConfigWidget = function (domElement, configInterface) {
 						oFReader.readAsText(fileInfo, 'UTF-8');
 					}
 					element.value = '';
-				});
+				}
 				template = domElement.querySelector('[role=template]');
 				list = template.parentElement;
 				list.removeChild(template);

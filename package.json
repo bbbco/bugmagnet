@@ -11,5 +11,10 @@
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-jscs": "^1.8.0",
     "grunt-mozilla-addon-sdk": "~0.4.0"
-  }
+  },
+  "repository": {
+	  "type": "git",
+	  "url": "git://github.com/gojko/bugmagnet"
+  },
+  "license": "MIT"
 }

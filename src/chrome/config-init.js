@@ -14,6 +14,9 @@ var ChromeConfigInterface = function () {
 			callback(items && items.additionalMenus);
 		});
 	};
+	self.closeWindow = function () {
+		window.close();
+	};
 };
 if (!window.jasmine) {
 	document.addEventListener('DOMContentLoaded', function () {

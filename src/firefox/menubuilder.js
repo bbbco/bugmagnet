@@ -39,10 +39,10 @@ FirefoxMenuBuilder.prototype.menuItem = function (title, parentMenu, itemData) {
 	// so we use JSON.stringify here, and then JSON.parse when sending the data
 	// on to the common BugMagnet function in the content script caller
 	if (typeof (itemData) === 'string') {
-		itemData = JSON.stringify({ '_type': 'literal', value: itemData });
-	} else {
-		itemData = JSON.stringify(itemData);
+		itemData = { '_type': 'literal', value: itemData };
 	}
+	itemData = JSON.stringify(itemData);
+
 	item = cm.Item({
 		label: title,
 		data: itemData,
@@ -51,3 +51,29 @@ FirefoxMenuBuilder.prototype.menuItem = function (title, parentMenu, itemData) {
 	parentMenu.addItem(item);
 	return item;
 };
+
+FirefoxMenuBuilder.prototype.configMenuItem = function (title, parentMenu, callback) {
+	'use strict';
+
+	var cm = require('sdk/context-menu'),
+		item;
+
+	item = cm.Item({
+		label: title,
+		contentScript: 'self.on("click", self.postMessage);',
+		onMessage: callback
+	});
+	parentMenu.addItem(item);
+	return item;
+
+};
+
+FirefoxMenuBuilder.prototype.separator = function (parentMenu) {
+	'use strict';
+	var cm = require('sdk/context-menu'),
+		sep;
+	sep = cm.Separator();
+	parentMenu.addItem(sep);
+	return sep;
+};
+
